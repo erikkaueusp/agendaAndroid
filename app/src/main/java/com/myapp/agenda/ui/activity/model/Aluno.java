@@ -3,8 +3,12 @@ package com.myapp.agenda.ui.activity.model;
 
 import androidx.annotation.NonNull;
 
-public class Aluno {
+import java.io.Serializable;
 
+
+public class Aluno implements Serializable {
+
+    private int id;
     private String nome;
     private String telefone;
     private String email;
@@ -13,6 +17,10 @@ public class Aluno {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
+    }
+
+    public Aluno() {
+
     }
 
     public String getNome() {
@@ -31,5 +39,29 @@ public class Aluno {
     @Override
     public String toString() {
         return getNome();
+    }
+
+    public void setId(int contadorId) {
+        this.id = contadorId;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean hasIdValid() {
+        return id >0;
     }
 }

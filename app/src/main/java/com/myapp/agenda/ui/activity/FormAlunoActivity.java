@@ -1,13 +1,14 @@
 package com.myapp.agenda.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.myapp.agenda.R;
 import com.myapp.agenda.ui.activity.dao.AlunoDAO;
@@ -19,6 +20,7 @@ public class FormAlunoActivity extends AppCompatActivity {
     private EditText campoNome;
     private EditText campoTelefone;
     private EditText campoEmail;
+    private Aluno aluno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +30,21 @@ public class FormAlunoActivity extends AppCompatActivity {
         setTitle(TITLE);
 
         AlunoDAO alunoDAO = new AlunoDAO();
+//        alunoDAO.salva(new Aluno("Erik","11971478525","erik@erik.com"));
+//        alunoDAO.salva(new Aluno("Ana","11971478521","ana@ana.com"));
+//        alunoDAO.salva(new Aluno("Pedro","11971478522","pedro@pedro.com"));
 
         inicializarCampos();
+
+        Intent dados = getIntent();
+        if (dados.hasExtra("aluno")) {
+            aluno = (Aluno) dados.getSerializableExtra("aluno");
+            campoNome.setText(aluno.getNome());
+            campoEmail.setText(aluno.getEmail());
+            campoTelefone.setText(aluno.getTelefone());
+        } else {
+            aluno = new Aluno();
+        }
 
         Button botaoSalvar = getButton();
 
@@ -37,7 +52,7 @@ public class FormAlunoActivity extends AppCompatActivity {
         botaoSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Aluno aluno = criaAluno(alunoDAO);
+                Aluno aluno = preencheAluno(alunoDAO);
 
                 Toast.makeText(FormAlunoActivity.this, "" +
                         "Aluno: " + aluno.getNome() +
@@ -61,13 +76,21 @@ public class FormAlunoActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private Aluno criaAluno(AlunoDAO alunoDAO) {
+    private Aluno preencheAluno(AlunoDAO alunoDAO) {
         String nome = campoNome.getText().toString();
         String telefone = campoTelefone.getText().toString();
         String email = campoEmail.getText().toString();
 
-        Aluno aluno = new Aluno(nome, telefone, email);
-        alunoDAO.salva(aluno);
+//        Aluno aluno = new Aluno(nome, telefone, email);
+        aluno.setNome(nome);
+        aluno.setEmail(email);
+        aluno.setTelefone(telefone);
+        if (aluno.hasIdValid()) {
+            alunoDAO.editar(aluno);
+        } else {
+            alunoDAO.salva(aluno);
+        }
+
         return aluno;
     }
 }
